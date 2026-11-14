@@ -74,7 +74,6 @@
             font-weight: 800;
         }
 
-        /* Система экранов (слайдов) */
         .page-view {
             display: none;
             animation: fadeIn 0.25s ease;
@@ -89,7 +88,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Главный экран */
         .hero {
             text-align: center;
             padding: 55px 20px;
@@ -163,7 +161,6 @@
             font-size: 0.88rem;
         }
 
-        /* Экран меню */
         .menu-top-bar {
             display: flex;
             justify-content: space-between;
@@ -182,7 +179,6 @@
             font-size: 0.9rem;
         }
 
-        /* Фильтры категорий */
         .tabs {
             display: flex;
             gap: 10px;
@@ -264,7 +260,6 @@
             transform: scale(0.95);
         }
 
-        /* Модальное окно корзины */
         .modal {
             display: none;
             position: fixed;
@@ -349,7 +344,6 @@
             margin-bottom: 10px;
         }
 
-        /* Уведомление о добавлении */
         .toast {
             position: fixed;
             bottom: 20px;
@@ -376,7 +370,6 @@
         </button>
     </header>
 
-    <!-- ЭКРАН 1: ГЛАВНАЯ СТРАНИЦА -->
     <div id="homePage" class="page-view active">
         <section class="hero">
             <h1>Свежий обжаренный кофе и уют</h1>
@@ -403,7 +396,6 @@
         </div>
     </div>
 
-    <!-- ЭКРАН 2: ПОЛНОЕ МЕНЮ -->
     <div id="menuPage" class="page-view">
         <div class="container">
             <div class="menu-top-bar">
@@ -411,7 +403,6 @@
                 <h2 style="font-size: 1.3rem;">Наше меню</h2>
             </div>
 
-            <!-- Фильтр категорий -->
             <div class="tabs">
                 <button class="tab-btn active" onclick="filterMenu('all', this)">Всё меню</button>
                 <button class="tab-btn" onclick="filterMenu('coffee', this)">Кофе</button>
@@ -489,10 +480,8 @@
         </div>
     </div>
 
-    <!-- Всплывающее уведомление (вместо скучного alert) -->
     <div id="toast" class="toast">Добавлено в корзину!</div>
 
-    <!-- Модальное окно корзины -->
     <div class="modal" id="cartModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -528,14 +517,12 @@
     <script>
         let cart = [];
 
-        // Переключение между главным экраном и слайдом меню
         function switchPage(pageId) {
             document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
             window.scrollTo(0, 0);
         }
 
-        // Фильтрация позиций в меню по категориям
         function filterMenu(category, btnEl) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             btnEl.classList.add('active');
@@ -608,7 +595,9 @@
 
         function closeCartModal() {
             document.getElementById('cartModal').style.display = 'none';
-    function submitOrder() {
+        }
+
+        function submitOrder() {
             let name = document.getElementById('clientName').value;
             let phone = document.getElementById('clientPhone').value;
             let payment = document.getElementById('paymentMethod').value;
