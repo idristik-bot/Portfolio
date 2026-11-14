@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bubble Shooter Pro HD</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: #0b0f19;
+            color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        .screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 400px;
+            height: 100%;
+            background: linear-gradient(135deg, #1e293b 0%, #0b0f19 100%);
+            position: relative;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            color: #f59e0b;
+            text-align: center;
+            text-shadow: 0 2px 10px rgba(245, 158, 11, 0.3);
+        }
+
+        p {
+            color: #94a3b8;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 0.95rem;
+            padding: 0 20px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: #0b0f19;
+            border: none;
+            padding: 14px 36px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            border-radius: 14px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+            transition: transform 0.2s;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        #gameCanvas {
+            background: radial-gradient(circle at center, #1e293b 0%, #0b0f19 100%);
+            display: none;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+        }
+
+        .ui-panel {
+            display: none;
+            position: absolute;
+            top: 15px;
+            width: 100%;
+            max-width: 400px;
+            justify-content: space-between;
+            padding: 0 20px;
+            font-weight: bold;
+            font-size: 1rem;
+            color: #94a3b8;
+            z-index: 10;
+        }
+
+        .ui-panel span {
+            color: #f59e0b;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Меню игры -->
+    <div class="screen" id="menuScreen">
+        <h1>BUBBLE PRO</h1>
+        <p>Собирай по 3 в ряд, обрушай висячие кластеры и проходи уровни!</p>
+        <button class="btn" onclick="startGame()">ИГРАТЬ</button>
+    </div>
+
+    <!-- Верхняя панель -->
+    <div class="ui-panel" id="uiPanel">
+        <div>Уровень: <span id="levelVal">1</span></div>
+        <div>Счет: <span id="scoreVal">0</span></div>
+        <button onclick="returnToMenu()" style="background:none; border:none; color:#ef4444; font-weight:bold; cursor:pointer; font-size: 0.95rem;">Выход</button>
+    </div>
+
+    <!-- Игровой холст -->
+    <canvas id="gameCanvas"></canvas>
+
+    <script>
+        const menuScreen = document.getElementById('menuScreen');
+        const uiPanel = document.getElementById('uiPanel');
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreVal = document.getElementById('scoreVal');
+        const levelVal = document.getElementById('levelVal');
+
+        let score = 0;
+        let currentLevel = 1;
+        let gameRunning = false;
+
+        const cols = 8;
+        const rows = 12;
+        let radius = 20;
+        let grid = [];
+
+        // Палитра красивых глянцевых цветов
+        let colorDefs = {
+            red: { main: '#ef4444', light: '#fca5a5', dark: '#991b1b' },
+            blue: { main: '#3b82f6', light: '#93c5fd', dark: '#1e40af' },
+            green: { main: '#10b981', light: '#6ee7b7', dark: '#065f46' },
+            yellow: { main: '#f59e0b', light: '#fde68a', dark: '#92400e' },
+            purple: { main: '#8b5cf6', light: '#c4b5fd', dark: '#5b21b6' }
+        };
+        let colorKeys = Object.keys(colorDefs);
+
+        let shooter = { 
+            x: 0, 
+            y: 0, 
+            angle: -Math.PI / 2, 
+            colorKey: '', 
+            nextColorKey: '' 
+        };
+        let bullet = { x: 0, y: 0, vx: 0, vy: 0, active: false, colorKey: '' };
+        let targetAngle = -Math.PI / 2;
+
+        function resizeCanvas() {
+            let size = Math.min(window.innerWidth, 400);
+            canvas.width = size;
+            canvas.height = window.innerHeight > 650 ? 650 : window.innerHeight;
+            radius = canvas.width / (cols * 2);
+            shooter.x = canvas.width / 2;
+            shooter.y = canvas.height - 50;
+        }
+
+        function startGame() {
+            menuScreen.style.display = 'none';
+            uiPanel.style.display = 'flex';
+            canvas.style.display = 'block';
+            resizeCanvas();
+            score = 0;
+            currentLevel = 1;
+            scoreVal.innerText = score;
+            levelVal.innerText = currentLevel;
+            startLevel(currentLevel);
+            gameRunning = true;
+            requestAnimationFrame(update);
+        }
+
+        function startLevel(lvl) {
+            initGrid(lvl);
+            shooter.colorKey = getSmartColor();
+            shooter.nextColorKey = getSmartColor();
+        }
+
+        function returnToMenu() {
+            gameRunning = false;
+            canvas.style.display = 'none';
+            uiPanel.style.display = 'none';
+            menuScreen.style.display = 'flex';
+        }
+
+        function getSmartColor() {
+            let available = new Set();
+            for (let r = 0; r < grid.length; r++) {
+                if (!grid[r]) continue;
+                for (let c = 0; c < cols; c++) {
+                    if (grid[r][c] !== null) available.add(grid[r][c]);
+                }
+            }
+            let list = Array.from(available);
+            if (list.length === 0) return colorKeys[0];
+            return list[Math.floor(Math.random() * list.length)];
+        }
+
+        function initGrid(lvl) {
+            grid = [];
+            let startRows = Math.min(3 + lvl, 7); 
+            let poolSize = Math.min(2 + lvl, colorKeys.length);
+            let levelColors = colorKeys.slice(0, poolSize);
+
+            for (let r = 0; r < startRows; r++) {
+                grid[r] = [];
+                for (let c = 0; c < cols; c++) {
+                    grid[r][c] = levelColors[Math.floor(Math.random() * levelColors.length)];
+                }
+            }
+        }
+
+        // Управление касанием
+        window.addEventListener('click', (e) => {
+            if (!gameRunning || bullet.active) return;
+            const rect = canvas.getBoundingClientRect();
+            let clickX = e.clientX - rect.left;
+            let clickY = e.clientY - rect.top;
+
+            if (clickY >= canvas.height - 90) return;
+
+            let angle = Math.atan2(clickY - shooter.y, clickX - shooter.x);
+            if (angle > -0.1) angle = -0.1;
+            if (angle < -Math.PI + 0.1) angle = -Math.PI + 0.1;
+
+            targetAngle = angle;
+            shooter.angle = targetAngle;
+
+            let speed = 14;
+            bullet.x = shooter.x;
+            bullet.y = shooter.y;
+            bullet.vx = Math.cos(angle) * speed;
+            bullet.vy = Math.sin(angle) * speed;
+            bullet.colorKey = shooter.colorKey;
+            bullet.active = true;
+
+            shooter.colorKey = shooter.nextColorKey;
+            shooter.nextColorKey = getSmartColor();
+        });
+
+        function update() {
+            if (!gameRunning) return;
+
+            if (bullet.active) {
+                bullet.x += bullet.vx;
+                bullet.y += bullet.vy;
+
+                if (bullet.x - radius < 0 || bullet.x + radius > canvas.width) {
+                    bullet.vx = -bullet.vx;
+                }
+
+                checkCollisionAndSnap();
+            }
+
+            draw();
+            requestAnimationFrame(update);
+        }
+
+        function checkCollisionAndSnap() {
+            if (bullet.y - radius <= 40) {
+                findAndSnapToGrid(bullet.x, bullet.y);
+                return;
+            }
+
+            for (let r = 0; r < grid.length; r++) {
+                if (!grid[r]) continue;
+                for (let c = 0; c < grid[r].length; c++) {
+                    if (grid[r][c] !== null) {
+                        let cx = c * (radius * 2) + radius + (r % 2 === 0 ? 0 : radius);
+                        let cy = r * (radius * 1.7) + radius + 40;
+                        let dist = Math.hypot(bullet.x - cx, bullet.y - cy);
+                        if (dist < radius * 1.8) {
+                            findAndSnapToGrid(bullet.x, bullet.y);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        function findAndSnapToGrid(x, y) {
+            let bestR = 0, bestC = 0, minDist = Infinity;
+
+            while (grid.length < rows) {
+                grid.push(Array(cols).fill(null));
+            }
+
+            for (let r = 0; r < grid.length; r++) {
+                if (!grid[r]) grid[r] = Array(cols).fill(null);
+                for (let c = 0; c < cols; c++) {
+                    if (grid[r][c] === null) {
+                        let cx = c * (radius * 2) + radius + (r % 2 === 0 ? 0 : radius);
+                        let cy = r * (radius * 1.7) + radius + 40;
+                        let dist = Math.hypot(x - cx, y - cy);
+                        if (dist < minDist) {
+                            minDist = dist;
+                            bestR = r;
+                            bestC = c;
+                        }
+                    }
+                }
+            }
+
+            grid[bestR][bestC] = bullet.colorKey;
+            bullet.active = false;
+
+            popMatches(bestR, bestC, bullet.colorKey);
+            checkFloatingBubbles();
+            validateShooterColors();
+            checkBoardState();
+        }
+
+        function validateShooterColors() {
+            let available = new Set();
+            for (let r = 0; r < grid.length; r++) {
+                if (!grid[r]) continue;
+                for (let c = 0; c < cols; c++) {
+                    if (grid[r][c] !== null) available.add(grid[r][c]);
+                }
+            }
+            if (available.size > 0) {
+                if (!available.has(shooter.colorKey)) shooter.colorKey = getSmartColor();
+                if (!available.has(shooter.nextColorKey)) shooter.nextColorKey = getSmartColor();
+            }
+        }
+
+        function checkBoardState() {
+            let remaining = 0;
+            let lowestRow = 0;
+
+            for (let r = 0; r < grid.length; r++) {
+                if (!grid[r]) continue;
+                for (let c = 0; c < cols; c++) {
+                    if (grid[r][c] !== null) {
+                        remaining++;
+                        if (r > lowestRow) lowestRow = r;
+                    }
+                }
+            }
+
+            if (remaining === 0) {
+                currentLevel++;
+                levelVal.innerText = currentLevel;
+                score += 150 * currentLevel;
+                scoreVal.innerText = score;
+                setTimeout(() => {
+                    alert('Уровень пройден! Уровень ' + currentLevel);
+                    startLevel(currentLevel);
+                }, 100);
+                return;
+            }
+
+            if (lowestRow >= rows - 2) {
+                setTimeout(() => {
+                    alert('Игра окончена! Попробуй уровень ' + currentLevel);
+                    startLevel(currentLevel);
+                }, 100);
+            }
+        }
+
+        function popMatches(startR, startC, targetKey) {
+            let visited = Array(rows).fill().map(() => Array(cols).fill(false));
+            let matchGroup = [];
+
+            function dfs(r, c) {
+                if (r < 0 || r >= grid.length || c < 0 || c >= cols) return;
+                if (visited[r][c] || !grid[r] || grid[r][c] !== targetKey) return;
+                visited[r][c] = true;
+                matchGroup.push({r, c});
+
+                let even = (r % 2 === 0);
+                let neighbors = even ? [
+                    {r: r-1, c: c-1}, {r: r-1, c: c},
+                    {r: r, c: c-1},   {r: r, c: c+1},
+                    {r: r+1, c: c-1}, {r: r+1, c: c}
+                ] : [
+                    {r: r-1, c: c},   {r: r-1, c: c+1},
+                    {r: r, c: c-1},   {r: r, c: c+1},
+                    {r: r+1, c: c},   {r: r+1, c: c+1}
+                ];
+
+                for (let n of neighbors) dfs(n.r, n.c);
+            }
+
+            dfs(startR, startC);
+
+            if (matchGroup.length >= 3) {
+                for (let m of matchGroup) grid[m.r][m.c] = null;
+                score += matchGroup.length * 20;
+                scoreVal.innerText = score;
+            }
+        }
+
+        function checkFloatingBubbles() {
+            let visited = Array(rows).fill().map(() => Array(cols).fill(false));
+
+            function dfsCeiling(r, c) {
+                if (r < 0 || r >= grid.length || c < 0 || c >= cols) return;
+                if (visited[r][c] || !grid[r] || grid[r][c] === null) return;
+                visited[r][c] = true;
+
+                let even = (r % 2 === 0);
+                let neighbors = even ? [
+                    {r: r-1, c: c-1}, {r: r-1, c: c},
+                    {r: r, c: c-1},   {r: r, c: c+1},
+                    {r: r+1, c: c-1}, {r: r+1, c: c}
+                ] : [
+                    {r: r-1, c: c},   {r: r-1, c: c+1},
+                    {r: r, c: c-1},   {r: r, c: c+1},
+                    {r: r+1, c: c},   {r: r+1, c: c+1}
+                ];
+
+                for (let n of neighbors) dfsCeiling(n.r, n.c);
+            }
+
+            if (grid[0]) {
+                for (let c = 0; c < cols; c++) {
+                    if (grid[0][c] !== null) dfsCeiling(0, c);
+                }
+            }
+
+            let dropped = 0;
+            for (let r = 0; r < grid.length; r++) {
+                if (!grid[r]) continue;
+                for (let c = 0; c < cols; c++) {
+                    if (grid[r][c] !== null && !visited[r][c]) {
+                        grid[r][c] = null;
+                        dropped++;
+                    }
+                }
+            }
+
+            if (dropped > 0) {
+                score += dropped * 35;
+                scoreVal.innerText = score;
+            }
+        }
+
+        // Функция отрисовки красивого объемного 3D-шарика с бликом
+        function drawBubble(x, y, r, colorKey) {
+            let def = colorDefs[colorKey];
+            if (!def) return;
+
+            // Внешняя тень
+            ctx.shadowColor = 'rgba(0,0,0,0.5)';
+            ctx.shadowBlur = 6;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 3;
+
+            // Радиальный градиент для объема
+            let grad = ctx.createRadialGradient(x - r * 0.3, y - r * 0.3, r * 0.1, x, y, r);
+            grad.addColorStop(0, def.light);
+            grad.addColorStop(0.7, def.main);
+            grad.addColorStop(1, def.dark);
+
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.arc(x, y, r - 1, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Сбрасываем тень для блика
+            ctx.shadowBlur = 0;
+            ctx.shadowOffsetY = 0;
+
+            // Глянцевый белый блик сверху
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+            ctx.beginPath();
+            ctx.arc(x - r * 0.3, y - r * 0.3, r * 0.3, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Отрисовка сетки шариков
+            for (let r = 0; r < grid.length; r++) {
+                if (!grid[r]) continue;
+                for (let c = 0; c < grid[r].length; c++) {
+                    if (grid[r][c] !== null) {
+                        let cx = c * (radius * 2) + radius + (r % 2 === 0 ? 0 : radius);
+                        let cy = r * (radius * 1.7) + radius + 40;
+                        drawBubble(cx, cy, radius - 1, grid[r][c]);
+                    }
+                }
+            }
+
+            // Линия опасности
+            ctx.strokeStyle = 'rgba(239, 68, 68, 0.4)';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([6, 6]);
+            ctx.beginPath();
+            ctx.moveTo(0, (rows - 2) * (radius * 1.7) + 40);
+            ctx.lineTo(canvas.width, (rows - 2) * (radius * 1.7) + 40);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Отрисовка детализированной пушки
+            ctx.save();
+            ctx.translate(shooter.x, shooter.y);
+            ctx.rotate(shooter.angle);
+            
+            // Металлический ствол пушки
+            let canonGrad = ctx.createLinearGradient(0, -12, 0, 12);
+            canonGrad.addColorStop(0, '#cbd5e1');
+            canonGrad.addColorStop(0.5, '#64748b');
+            canonGrad.addColorStop(1, '#334155');
+            ctx.fillStyle = canonGrad;
+            ctx.fillRect(0, -14, radius * 1.6, 28);
+            ctx.strokeStyle = '#0f172a';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(0, -14, radius * 1.6, 28);
+            ctx.restore();
+
+            // База пушки (основание)
+            let baseGrad = ctx.createRadialGradient(shooter.x, shooter.y, 5, shooter.x, shooter.y, radius * 1.1);
+            baseGrad.addColorStop(0, '#f59e0b');
+            baseGrad.addColorStop(1, '#b45309');
+            ctx.fillStyle = baseGrad;
+            ctx.beginPath();
+            ctx.arc(shooter.x, shooter.y, radius * 1.1, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Шарик в пушке
+            drawBubble(shooter.x, shooter.y, radius * 0.9, shooter.colorKey);
+
+            // Следующий шарик справа с подписью
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '11px sans-serif';
+            ctx.fillText('СЛЕД.', shooter.x + 30, shooter.y - 18);
+            drawBubble(shooter.x + 45, shooter.y + 5, radius * 0.65, shooter.nextColorKey);
+
+            // Летящий снаряд
+            if (bullet.active) {
+                drawBubble(bullet.x, bullet.y, radius, bullet.colorKey);
+            }
+        }
+    </script>
+</body>
+</html>

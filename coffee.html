@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aroma Craft — Уютная кофейня в центре города</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent: #f59e0b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding-bottom: 40px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 5%;
+            background: rgba(15, 23, 42, 0.9);
+            position: sticky;
+            top: 0;
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            border-bottom: 1px solid #334155;
+        }
+
+        .logo {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-bottom: 1px solid #334155;
+        }
+
+        .hero h1 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            font-weight: 800;
+        }
+
+        .hero p {
+            color: var(--text-muted);
+            font-size: 1rem;
+            max-width: 600px;
+            margin: 0 auto 25px auto;
+        }
+
+        .btn {
+            background-color: var(--accent);
+            color: #0f172a;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:active {
+            transform: scale(0.96);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #334155;
+            transition: var(--transition);
+        }
+
+        .card h3 {
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .price {
+            color: var(--accent);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        /* Модальное окно */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid #334155;
+            text-align: center;
+        }
+
+        .modal-content h3 {
+            margin-bottom: 15px;
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            background: var(--bg-color);
+            border: 1px solid #334155;
+            border-radius: 6px;
+            color: var(--text-main);
+            font-size: 1rem;
+        }
+
+        .close-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            margin-top: 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-top: 1px solid #334155;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">☕ Aroma Craft</div>
+        <button class="btn" onclick="openModal()" style="padding: 8px 16px; font-size: 0.9rem;">Связаться</button>
+    </header>
+
+    <section class="hero">
+        <h1>Свежий кофе и уютная атмосфера</h1>
+        <p>Лучшее место для встреч, работы и отдыха в вашем городе. Авторские напитки и свежая выпечка каждый день.</p>
+        <button class="btn" onclick="openModal()">Забронировать столик</button>
+    </section>
+
+    <div class="container">
+        <h2 class="section-title">Популярные позиции</h2>
+        <div class="grid">
+            <div class="card">
+                <h3>Капучино Классик</h3>
+                <p>Двойной эспрессо с нежной молочной пенкой и легким ванильным послевкусием.</p>
+                <div class="price">25 с.</div>
+            </div>
+            <div class="card">
+                <h3>Латте Халва</h3>
+                <p>Фирменный раф с добавлением восточных ноток и натуральной халвы.</p>
+                <div class="price">32 с.</div>
+            </div>
+            <div class="card">
+                <h3>Круассан с миндалем</h3>
+                <p>Свежая слоеная выпечка с хрустящей корочкой и миндальным кремом.</p>
+                <div class="price">18 с.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно -->
+    <div class="modal" id="orderModal">
+        <div class="modal-content">
+            <h3>Оставить заявку</h3>
+            <p style="margin-bottom: 15px; font-size: 0.9rem;">Введите ваш номер телефона, и мы перезвоним вам в течение 5 минут.</p>
+            <input type="tel" id="phoneInput" placeholder="+992 (__) ___ __ __">
+            <button class="btn" style="width: 100%;" onclick="submitForm()">Отправить</button>
+            <br>
+            <button class="close-btn" onclick="closeModal()">Закрыть</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 Aroma Craft. Разработано с упором на результат.</p>
+    </footer>
+
+    <script>
+        const modal = document.getElementById('orderModal');
+
+        function openModal() {
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+
+        function submitForm() {
+            const phone = document.getElementById('phoneInput').value;
+            if (phone.length < 5) {
+                alert('Пожалуйста, введите корректный номер телефона');
+                return;
+            }
+            alert('Спасибо! Ваша заявка принята. Мы скоро свяжемся с вами.');
+            document.getElementById('phoneInput').value = '';
+            closeModal();
+        }
+
+        // Закрытие модального окна по клику вне его
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
