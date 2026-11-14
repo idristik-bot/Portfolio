@@ -47,181 +47,154 @@
             background: var(--accent-glow);
             color: var(--accent);
             padding: 5px 12px;
+            font-size: 13px;
+            font-weight: 600;
             border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            margin-bottom: 15px;
-            border: 1px solid rgba(245, 158, 11, 0.4);
+            margin-bottom: 20px;
         }
 
         h1 {
-            font-size: 2.2rem;
+            font-size: 36px;
             font-weight: 800;
-            margin-bottom: 12px;
+            margin-bottom: 15px;
             letter-spacing: -0.5px;
         }
 
         .subtitle {
+            font-size: 16px;
             color: var(--text-dim);
-            font-size: 1.05rem;
-            max-width: 600px;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
+            max-width: 650px;
         }
 
         .cta-group {
             display: flex;
             gap: 12px;
+            margin-bottom: 30px;
             flex-wrap: wrap;
         }
 
         .btn-primary {
             background: var(--accent);
-            color: #090d16;
+            color: #000;
             padding: 12px 24px;
             border-radius: 10px;
             font-weight: 700;
             text-decoration: none;
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: inline-block;
-        }
-
-        .btn-primary:active {
-            transform: scale(0.96);
+            transition: 0.2s;
         }
 
         .btn-secondary {
             background: var(--surface);
             color: var(--text);
+            border: 1px solid var(--border);
             padding: 12px 24px;
             border-radius: 10px;
             font-weight: 600;
             text-decoration: none;
-            border: 1px solid var(--border);
-            transition: background 0.2s;
+            transition: 0.2s;
         }
 
-        /* Навыки */
         .skills {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
-            margin: 30px 0;
         }
 
         .skill-tag {
             background: var(--surface);
-            color: var(--text-dim);
-            padding: 6px 14px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            font-weight: 600;
             border: 1px solid var(--border);
+            color: var(--text-dim);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 13px;
         }
 
-        /* Секция проектов */
+        /* Проекты */
         .section-title {
-            font-size: 1.4rem;
-            font-weight: 700;
+            font-size: 24px;
             margin: 40px 0 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            font-weight: 700;
         }
 
         .projects-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            margin-bottom: 40px;
         }
 
         .project-card {
             background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: 14px;
+            border-radius: 16px;
             padding: 24px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            transition: border-color 0.3s, transform 0.2s;
-        }
-
-        .project-card:hover {
-            border-color: var(--accent);
         }
 
         .project-tag {
-            font-size: 0.75rem;
-            text-transform: uppercase;
+            font-size: 12px;
             color: var(--accent);
-            font-weight: 700;
-            letter-spacing: 0.5px;
+            font-weight: 600;
             margin-bottom: 8px;
         }
 
         .project-card h3 {
-            font-size: 1.25rem;
-            margin-bottom: 10px;
+            font-size: 18px;
+            margin-bottom: 8px;
         }
 
         .project-card p {
+            font-size: 14px;
             color: var(--text-dim);
-            font-size: 0.92rem;
             margin-bottom: 20px;
         }
 
         .project-link {
             color: var(--accent);
             text-decoration: none;
-            font-weight: 700;
-            font-size: 0.95rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
+            font-weight: 600;
+            font-size: 14px;
         }
 
         /* Услуги */
         .services-list {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 24px;
-            margin-top: 20px;
+            display: grid;
+            gap: 12px;
+            margin-bottom: 40px;
         }
 
         .service-item {
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .service-item:last-child {
-            border-bottom: none;
-            padding-bottom: 0;
-        }
-
-        .service-item:first-child {
-            padding-top: 0;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 20px;
+            border-radius: 12px;
         }
 
         .service-name {
             font-weight: 600;
+            margin-bottom: 4px;
         }
 
         .service-desc {
+            font-size: 14px;
             color: var(--text-dim);
-            font-size: 0.85rem;
         }
 
         footer {
-            margin-top: 60px;
+            text-align: center;
             padding: 30px 0;
             border-top: 1px solid var(--border);
-            text-align: center;
             color: var(--text-dim);
-            font-size: 0.85rem;
+            font-size: 13px;
+        }
+
+        @media(min-width: 600px) {
+            .projects-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
     </style>
 </head>
@@ -231,10 +204,9 @@
         <header>
             <div class="badge">● Открыт к заказам</div>
             <h1>Привет, я Идрис.<br>Создаю сайты и веб-игры.</h1>
-            <p class="subtitle">Разрабатываю быстрые посадочные страницы для бизнеса, интерактивные интерфейсы и браузерные игры без лишней воды и тяжелых шаблонов.</p>
+            <p class="subtitle">Разрабатываю быстрые посадочные страницы для бизнеса, интерактивные интерфейсы и браузерные приложения без лишней воды и тяжелых шаблонов.</p>
             
             <div class="cta-group">
-                <!-- ЗАМЕНИ твой_ник НА СВОЙ ЮЗЕРНЕЙМ В TELEGRAM -->
                 <a href="https://t.me/nt11n" target="_blank" class="btn-primary">Написать в Telegram</a>
                 <a href="#projects" class="btn-secondary">Смотреть работы</a>
             </div>
@@ -250,48 +222,50 @@
 
         <h2 class="section-title" id="projects">Избранные проекты</h2>
         <div class="projects-grid">
-            <!-- Проект 1 -->
+            <!-- Проект 1: Кофейня -->
             <div class="project-card">
                 <div>
                     <div class="project-tag">Веб-сайт / Бизнес</div>
                     <h3>Aroma Craft — Лендинг кофейни</h3>
                     <p>Современный адаптивный сайт для локального бизнеса. Включает меню, быструю загрузку на смартфонах и модальное окно приема заявок.</p>
                 </div>
-                <!-- Ссылка на файл с лендингом, если они в одной папке -->
                 <a href="coffee.html" class="project-link">Открыть проект →</a>
             </div>
 
-            <!-- Проект 2 -->
+            <!-- Проект 2: Игра -->
             <div class="project-card">
                 <div>
                     <div class="project-tag">Геймдев / HTML5 Canvas</div>
                     <h3>Bubble Pro HD</h3>
-                    <p>Интерактивная аркадная игра с 3D-графикой на чистом JavaScript. Реализована физика столкновений, обрушение кластеров и система уровней.</p>
+                    <p>Интерактивная аркадная игра с физикой столкновений на чистом JavaScript и поддержкой мобильных экранов.</p>
                 </div>
-                <!-- Ссылка на файл с игрой, если они в одной папке -->
                 <a href="game.html" class="project-link">Запустить игру →</a>
+            </div>
+
+            <!-- Проект 3: Учет финансов -->
+            <div class="project-card">
+                <div>
+                    <div class="project-tag">Web App / FinTech</div>
+                    <h3>Money Tracker — Учет финансов</h3>
+                    <p>Мобильный трекер доходов и расходов в сомони с нижней навигацией, графиками по категориям и бюджетом.</p>
+                </div>
+                <a href="finance.html" class="project-link">Открыть приложение →</a>
             </div>
         </div>
 
         <h2 class="section-title">Чем могу помочь</h2>
         <div class="services-list">
             <div class="service-item">
-                <div>
-                    <div class="service-name">Сайт-визитка или Лендинг</div>
-                    <div class="service-desc">Упаковка вашего бизнеса, услуг или товаров для клиентов из Instagram и рекламы.</div>
-                </div>
+                <div class="service-name">Сайт-визитка или Лендинг</div>
+                <div class="service-desc">Упаковка вашего бизнеса, услуг или товаров для клиентов из Instagram и рекламы.</div>
             </div>
             <div class="service-item">
-                <div>
-                    <div class="service-name">Мини-игры и интерактив</div>
-                    <div class="service-desc">Создание браузерных игр, квизов и анимаций для привлечения аудитории.</div>
-                </div>
+                <div class="service-name">Мини-игры и интерактив</div>
+                <div class="service-desc">Создание браузерных игр, квизов и анимаций для привлечения аудитории.</div>
             </div>
             <div class="service-item">
-                <div>
-                    <div class="service-name">Адаптация под смартфоны</div>
-                    <div class="service-desc">Исправление верстки, чтобы ваш сайт идеально открывался на любом телефоне.</div>
-                </div>
+                <div class="service-name">Адаптация под смартфоны</div>
+                <div class="service-desc">Исправление верстки, чтобы ваш сайт идеально открывался на любом телефоне.</div>
             </div>
         </div>
 
