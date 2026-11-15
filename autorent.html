@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoRent Dushanbe — Премиум прокат авто</title>
+    <style>
+        :root {
+            --bg-page: #f4f4f6;
+            --bg-card: #ffffff;
+            --bg-dark: #111827;
+            --accent: #059669; /* Изумрудно-зеленый авто-акцент */
+            --accent-hover: #047857;
+            --warning-bg: #fef2f2;
+            --warning-border: #ef4444;
+            --warning-text: #991b1b;
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+            --transition: all 0.25s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.5;
+            padding-bottom: 50px;
+        }
+
+        /* Шапка */
+        header {
+            background: var(--bg-card);
+            padding: 16px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        }
+
+        .logo {
+            font-size: 1.2rem;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            color: var(--bg-dark);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .header-btn {
+            background: var(--bg-dark);
+            color: #fff;
+            border: none;
+            padding: 9px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        /* Главный баннер */
+        .hero {
+            background: var(--bg-dark);
+            color: #ffffff;
+            padding: 50px 20px;
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(5, 150, 105, 0.2);
+            color: #34d399;
+            border: 1px solid rgba(52, 211, 153, 0.3);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            margin-bottom: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .hero h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            color: #9ca3af;
+            max-width: 540px;
+            margin: 0 auto 24px auto;
+            font-size: 0.95rem;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 25px 16px;
+        }
+
+        /* Блок правил (Примечания) */
+        .rules-box {
+            background: var(--warning-bg);
+            border: 1px solid #fecaca;
+            border-left: 5px solid var(--warning-border);
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin-bottom: 28px;
+        }
+
+        .rules-title {
+            color: var(--warning-text);
+            font-weight: 800;
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-transform: uppercase;
+        }
+
+        .rules-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 10px;
+        }
+
+        .rules-list li {
+            font-size: 0.85rem;
+            color: #7f1d1d;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.6);
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+
+        /* Фильтры */
+        .filters {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .filter-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: var(--transition);
+        }
+
+        .filter-btn.active {
+            background: var(--bg-dark);
+            color: #ffffff;
+            border-color: var(--bg-dark);
+        }
+
+        /* Сетка машин */
+        .cars-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+            gap: 20px;
+        }
+
+        .car-card {
+            background: var(--bg-card);
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: var(--transition);
+        }
+
+        .car-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        }
+
+        .car-img-wrap {
+            position: relative;
+            height: 185px;
+            background: #e5e7eb;
+            overflow: hidden;
+        }
+
+        .car-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .car-year-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(17, 24, 39, 0.85);
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            backdrop-filter: blur(4px);
+        }
+
+        .car-body {
+            padding: 18px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .car-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            margin-bottom: 6px;
+            color: var(--text-main);
+        }
+
+        .car-specs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .spec-tag {
+            background: var(--bg-page);
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        .car-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 14px;
+            border-top: 1px solid var(--border);
+        }
+
+        .car-price {
+            font-size: 1.2rem;
+            font-weight: 900;
+            color: var(--text-main);
+        }
+
+        .car-price span {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        .rent-btn {
+            background: var(--accent);
+            color: #ffffff;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .rent-btn:hover {
+            background: var(--accent-hover);
+        }
+
+        /* Модальное окно оформления */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(17, 24, 39, 0.75);
+            backdrop-filter: blur(4px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 16px;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 440px;
+            padding: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.3rem;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        .selected-car-info {
+            background: var(--bg-page);
+            padding: 14px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--text-main);
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: var(--accent);
+        }
+
+        .total-calc {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin: 16px 0;
+            font-weight: 800;
+            color: #065f46;
+        }
+
+        .checkbox-wrap {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 16px;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+        }
+
+        .checkbox-wrap input {
+            margin-top: 3px;
+            width: 16px;
+            height: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo" onclick="window.scrollTo(0,0)">AUTORENT<span>.TJ</span></div>
+        <button class="header-btn" onclick="document.getElementById('catalog').scrollIntoView({behavior: 'smooth'})">Выбрать авто</button>
+    </header>
+
+    <section class="hero">
+        <div class="hero-badge">Душанбе • Подача за 30 минут</div>
+        <h1>Аренда проверенных авто без лишней бюрократии</h1>
+        <p>От легендарных Mercedes W211 и Camry до заряженных BMW M5 F10 и Land Cruiser 300. Чистые, застрахованные автомобили в отличном состоянии.</p>
+    </section>
+
+    <div class="container">
+        
+        <!-- ВАЖНЫЕ ПРИМЕЧАНИЯ -->
+        <div class="rules-box">
+            <div class="rules-title">⚠️ Обязательные условия аренды (читать перед бронью)</div>
+            <ul class="rules-list">
+                <li>🔞 Возраст водителя: строго от 18 лет (при себе иметь права и паспорт).</li>
+                <li>📡 Контроль скорости: на всех авто установлен GPS-радар с лимитом до 110 км/ч.</li>
+                <li>⛽ Топливо: бензин оплачивается арендатором (возврат с тем же уровнем).</li>
+            </ul>
+        </div>
+
+        <!-- ФИЛЬТРЫ АВТОПАРКА -->
+        <div id="catalog" class="filters">
+            <button class="filter-btn active" onclick="filterCars('all', this)">Все автомобили (9)</button>
+            <button class="filter-btn" onclick="filterCars('camry', this)">Линейка Camry</button>
+            <button class="filter-btn" onclick="filterCars('suv', this)">Внедорожники</button>
+            <button class="filter-btn" onclick="filterCars('sport', this)">Бизнес и Спорт</button>
+        </div>
+
+        <!-- СЕТКА АВТОМОБИЛЕЙ -->
+        <div class="cars-grid" id="carsGrid">
+
+            <!-- 1. BMW M5 F10 -->
+            <div class="car-card" data-cat="sport">
+                <div class="car-img-wrap">
+                 <img src="m5f10.jpg" alt="BMW M5 F10">  
+                    <span class="car-year-badge">Рестайлинг</span>
+                </div>
+                <div class="car-body">
+                    <div>
+                        <h3 class="car-title">BMW M5 (F10)</h3>
+                        <div class="car-specs">
+                            <span class="spec-tag">4.4L V8 TwinTurbo</span>
+                            <span class="spec-tag">Автомат</span>
+                            <span class="spec-tag">Кожа / М-пакет</span>
+                        </div>
+                    </div>
+                    <div class="car-footer">
+                        <div class="car-price">950 с. <span>/ сутки</span></div>
+                        <button class="rent-btn" onclick="openRentModal('BMW M5 (F10)', 950)">Арендовать</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Toyota Land Cruiser 300 -->
+            <div class="car-card" data-cat="suv">
+                <div class="car-img-wrap">
+                   <img src="landcruiser300.jpg" alt="Toyota Land Cruiser 300"> 
+                    <span class="car-year-badge">2023–2024 г.</span>
+                </div>
+                <div class="car-body">
+                    <div>
+                        <h3 class="car-title">Toyota Land Cruiser 300</h3>
+                        <div class="car-specs">
+                            <span class="spec-tag">3.5L Twin-Turbo</span>
+                            <span class="spec-tag">4WD</span>
+                            <span class="spec-tag">Люкс 7 мест</span>
+                        </div>
+                    </div>
+                    <div class="car-footer">
+                        <div class="car-price">1300 с. <span>/ сутки</span></div>
+                        <button class="rent-btn" onclick="openRentModal('Toyota Land Cruiser 300', 1300)">Арендовать</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Toyota Land Cruiser Prado -->
+            <div class="car-card" data-cat="suv">
+                <div class="car-img-wrap">
+                    <img src="prado150.jpg" alt="Toyota Prado 150">
+                    <span class="car-year-badge">2022–2024 г.</span>
+                </div>
+                <div class="car-body">
+                    <div>
+                        <h3 class="car-title">Toyota Land Cruiser Prado</h3>
+                        <div class="car-specs">
+                            <span class="spec-tag">2.8L / 4.0L</span>
+                            <span class="spec-tag">Полный привод</span>
+                            <span class="spec-tag">Климат-контроль</span>
+                        </div>
+                    </div>
+                    <div class="car-footer">
+                        <div class="car-price">800 с. <span>/ сутки</span></div>
+                        <button class="rent-btn" onclick="openRentModal('Toyota Land Cruiser Prado', 800)">Арендовать</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Mercedes-Benz E-Class W211 -->
+            <div class="car-card" data-cat="sport">
+                <div class="car-img-wrap">
+                    <img src="w211.jpg" alt="Mercedes W211">
+                    <span class="car-year-badge">Avantgarde</span>
+                </div>
+                <div class="car-body">
+                    <div>
+                        <h3 class="car-title">Mercedes-Benz E-Class (W211)</h3>
+                        <div class="car-specs">
+                            <span class="spec-tag">3.2L / 3.5L</span>
+                            <span class="spec-tag">Автомат</span>
+                            <span class="spec-tag">Идеальное состояние</span>
+                        </div>
+                    </div>
+                    <div class="car-footer">
+                        <div class="car-price">350 с. <span>/ сутки</span></div>
+                        <button class="rent-btn" onclick="openRentModal('Mercedes-Benz W211', 350)">Арендовать</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. Toyota Camry 80 -->
+            <div class="car-card" data-cat="camry">
+                <div class="car-img-wrap">
+                 <img src="camry80.jpg" alt="Toyota Camry 80">   
+                    <span class="car-year-badge">2024–2025 г.</span>
+                </div>
+                <div class="car-body">
+                    <div>
+                        <h3 class="car-title">Toyota Camry 80 (XV80)</h3>
+                        <div class="car-specs">
+                            <span class="spec-tag">2.5L Hybrid / Бензин</span>
+                            <span class="spec-tag">Новый кузов</span>
+                            <span class="spec-tag">Панорама</span>
+                        </div>
+                    </div>
+                    <div class="car-footer">
+                        <div class="car-price">650 с. <span>/ сутки</span></div>
+                        <button class="rent-btn" onclick="openRentModal('Toyota Camry 80', 650)">Арендовать</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. Toyota Camry 70 -->
+            <div class="car-card" data-cat="camry">
+                <div class="car-img-wrap">
+                    <img src="camry70.jpg" alt="Toyota Camry 70">
+                    <span class="car-year-badge">2021–2023 г.</span>
+                </div>
+                <div class="car-body">
+                    <div>
+                        <h3 class="car-title">Toyota Camry 70 (XV70)</h3>
+                        <div class="car-specs">
+                            <span class="spec-tag">2.5L / 3.5L</span>
+                            <span class="spec-tag">Камера 360°</span>
+                            <span class="spec-tag">Кожаный салон</span>
+                        </div>
+                    </div>
+                    <div class="car-footer">
+                        <div class="car-price">500 с. <span>/ сутки</span></div>
+                        <button class="rent-btn" onclick="openRentModal('Toyota Camry 70', 500)">Арендовать</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 7. Toyota Camry 55 -->
+            <div class="car-card" data-cat="camry">
+                <div class="car-img-wrap">
+             <img src="camry55.jpg" alt="Toyota Camry 55">
+
+                    <span class="car-year-badge">Рестайлинг</span>
+                </div>
+                <div class="car-body">
+                    <div>
+                        <h3 class="car-title">Toyota Camry 55</h3>
+                        <div class="car-specs">
+                            <span class="spec-tag">2.5L Автомат</span>
+                            <span class="spec-tag">Мягкая подвеска</span>
+                            <span class="spec-tag">Кондиционер</span>
+                        </div>
+                    </div>
+                    <div class="car-footer">
+                        <div class="car-price">380 с. <span>/ сутки</span></div>
+                        <button class="rent-btn" onclick="openRentModal('Toyota Camry 55', 380)">Арендовать</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 8. Toyota Camry 50 -->
+            <div class="car-card" data-cat="camry">
+                <div class="car-img-wrap">
+                 <img src="camry50.jpg" alt="Toyota Camry 50">   
+                    <span class="car-year-badge">Комфорт</span>
+                </div>
+                <div class="car-body">
+                    <div>
+                        <h3 class="car-title">Toyota Camry 50</h3>
+                        <div class="car-specs">
+                            <span class="spec-tag">2.5L Бензин</span>
+                            <span class="spec-tag">Автомат</span>
+                            <span class="spec-tag">Просторный салон</span>
+                        </div>
+                    </div>
+                    <div class="car-footer">
+                        <div class="car-price">330 с. <span>/ сутки</span></div>
+                        <button class="rent-btn" onclick="openRentModal('Toyota Camry 50', 330)">Арендовать</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 9. Toyota Camry 40 -->
+            <div class="car-card" data-cat="camry">
+                <div class="car-img-wrap">
+                    <span class="car-year-badge">Классика</span> 
+                  <img src="camry40.jpg" alt="Toyota Camry 40">
+
+                </div>
+                <div class="car-body">
+                    <div>
+                        <h3 class="car-title">Toyota Camry 40</h3>
+                        <div class="car-specs">
+                            <span class="spec-tag">2.4L Автомат</span>
+                            <span class="spec-tag">Надежный и экономичный</span>
+                        </div>
+                    </div>
+                    <div class="car-footer">
+                        <div class="car-price">260 с. <span>/ сутки</span></div>
+                        <button class="rent-btn" onclick="openRentModal('Toyota Camry 40', 260)">Арендовать</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО БРОНИРОВАНИЯ -->
+    <div class="modal" id="rentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Оформление аренды</h3>
+                <button class="close-btn" onclick="closeRentModal()">✕</button>
+            </div>
+
+            <div class="selected-car-info">
+                <div style="font-size: 0.8rem; color: var(--text-muted);">Выбранный автомобиль:</div>
+                <div id="modalCarName" style="font-weight: 800; font-size: 1.1rem; color: var(--text-main);">—</div>
+                <div style="font-size: 0.85rem; color: var(--accent); font-weight: 700;">Тариф: <span id="modalCarRate">0</span> с. / сутки</div>
+            </div>
+
+            <div class="form-group">
+                <label>Ваше имя</label>
+                <input type="text" id="renterName" placeholder="Введите ваше имя">
+            </div>
+
+            <div class="form-group">
+                <label>Ваш возраст (строго от 18 лет)</label>
+                <input type="number" id="renterAge" placeholder="Например: 22" min="18">
+            </div>
+
+            <div class="form-group">
+                <label>Телефон для связи</label>
+                <input type="tel" id="renterPhone" placeholder="+992 (__) ___ __ __">
+            </div>
+
+            <div class="form-group">
+                <label>Количество суток аренды</label>
+                <select id="rentDays" onchange="recalcTotal()">
+                    <option value="1">1 сутки</option>
+                    <option value="2">2 суток</option>
+                    <option value="3">3 суток</option>
+                    <option value="5">5 суток</option>
+                    <option value="7">7 суток (неделя)</option>
+                </select>
+            </div>
+
+            <div class="total-calc">
+                <span>Итого к оплате (без бензина):</span>
+                <span id="modalTotalSum" style="font-size: 1.2rem;">0 с.</span>
+            </div>
+
+            <div class="checkbox-wrap">
+                <input type="checkbox" id="agreeRules" checked>
+                <label for="agreeRules">Я старше 18 лет, согласен с ограничением скорости по радару до 110 км/ч и оплатой бензина за свой счет.</label>
+            </div>
+
+            <button class="rent-btn" style="width: 100%; padding: 14px; font-size: 1rem;" onclick="sendRentOrder()">Отправить заявку в WhatsApp</button>
+        </div>
+    </div>
+
+    <script>
+        let currentCar = { name: '', rate: 0 };
+
+        function filterCars(cat, btnEl) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btnEl.classList.add('active');
+
+            document.querySelectorAll('.car-card').forEach(card => {
+                if (cat === 'all' || card.getAttribute('data-cat') === cat) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function openRentModal(carName, rate) {
+            currentCar = { name: carName, rate: rate };
+            document.getElementById('modalCarName').innerText = carName;
+            document.getElementById('modalCarRate').innerText = rate;
+            document.getElementById('rentDays').value = '1';
+            recalcTotal();
+            document.getElementById('rentModal').style.display = 'flex';
+        }
+
+        function closeRentModal() {
+            document.getElementById('rentModal').style.display = 'none';
+        }
+
+        function recalcTotal() {
+            let days = parseInt(document.getElementById('rentDays').value);
+            let total = currentCar.rate * days;
+            document.getElementById('modalTotalSum').innerText = total + ' с.';
+        }
+
+        function sendRentOrder() {
+            let name = document.getElementById('renterName').value.trim();
+            let age = parseInt(document.getElementById('renterAge').value);
+            let phone = document.getElementById('renterPhone').value.trim();
+            let days = document.getElementById('rentDays').value;
+            let agreed = document.getElementById('agreeRules').checked;
+
+            if (name.length < 2 || phone.length < 5) {
+                alert('Пожалуйста, заполните имя и телефон!');
+                return;
+            }
+
+            if (!age || age < 18) {
+                alert('Извините, аренда автомобилей доступна строго с 18 лет!');
+                return;
+            }
+
+            if (!agreed) {
+                alert('Пожалуйста, подтвердите согласие с условиями аренды (радар 110 км/ч и бензин).');
+                return;
+            }
+
+            let total = currentCar.rate * parseInt(days);
+            let text = `Здравствуйте! Заявка на аренду авто (AutoRent.tj):%0A🚗 Авто: ${currentCar.name}%0A📅 Срок: ${days} сут.%0A💰 Итого: ${total} с. (бензин отдельно)%0A👤 Имя: ${name} (${age} лет)%0A📞 Телефон: ${phone}%0A✅ С лимитом радара 110 км/ч ознакомлен.`;
+
+            window.open(`https://wa.me/992970980300?text=${text}`, '_blank');
+        }
+
+        window.onclick = function(e) {
+            if (e.target === document.getElementById('rentModal')) {
+                closeRentModal();
+            }
+        }
+    </script>
+</body>
+</html>
