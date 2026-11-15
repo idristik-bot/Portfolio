@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BARBER STREET — Мужской клуб</title>
+    <style>
+        :root {
+            --bg-main: #09090b;
+            --bg-surface: #141416;
+            --bg-elevated: #1c1c1f;
+            --accent: #e11d48; /* Брутальный малиново-красный */
+            --accent-hover: #be123c;
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --border-color: #27272a;
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            line-height: 1.5;
+            padding-bottom: 60px;
+            background-image: radial-gradient(#1f1f23 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        /* Верхняя панель с барбер-полосой */
+        .barber-stripe {
+            height: 4px;
+            width: 100%;
+            background: repeating-linear-gradient(
+                45deg,
+                #e11d48,
+                #e11d48 15px,
+                #ffffff 15px,
+                #ffffff 30px,
+                #1d4ed8 30px,
+                #1d4ed8 45px,
+                #ffffff 45px,
+                #ffffff 60px
+            );
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 5%;
+            background: rgba(9, 9, 11, 0.88);
+            position: sticky;
+            top: 0;
+            backdrop-filter: blur(12px);
+            z-index: 100;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo {
+            font-size: 1.2rem;
+            font-weight: 900;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .booking-btn-top {
+            background: var(--text-primary);
+            color: var(--bg-main);
+            border: none;
+            padding: 9px 18px;
+            border-radius: 4px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: var(--transition);
+        }
+
+        .booking-btn-top:active {
+            transform: scale(0.95);
+        }
+
+        /* Экраны */
+        .page-view {
+            display: none;
+            animation: slideUp 0.25s ease-out;
+        }
+
+        .page-view.active {
+            display: block;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Главный блок */
+        .hero {
+            padding: 70px 20px 60px;
+            text-align: left;
+            max-width: 900px;
+            margin: 0 auto;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .hero-tag {
+            display: inline-block;
+            background: rgba(225, 29, 72, 0.15);
+            color: var(--accent);
+            border: 1px solid rgba(225, 29, 72, 0.3);
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 18px;
+            border-radius: 3px;
+        }
+
+        .hero h1 {
+            font-size: 2.4rem;
+            line-height: 1.15;
+            margin-bottom: 16px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -0.5px;
+        }
+
+        .hero p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            max-width: 520px;
+            margin-bottom: 32px;
+        }
+
+        .btn-main {
+            background-color: var(--accent);
+            color: #ffffff;
+            border: none;
+            padding: 16px 32px;
+            font-size: 0.95rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-main:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .btn-main:active {
+            transform: scale(0.97);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 35px 20px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            margin-bottom: 22px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: "";
+            display: block;
+            width: 4px;
+            height: 20px;
+            background: var(--accent);
+        }
+
+        /* Сетка карточек */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(265px, 1fr));
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background-color: var(--bg-surface);
+            border-radius: 6px;
+            padding: 22px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .card:hover {
+            border-color: #3f3f46;
+            background-color: var(--bg-elevated);
+        }
+
+        .card.active-card {
+            border-color: var(--accent);
+            background-color: rgba(225, 29, 72, 0.05);
+        }
+
+        .card h3 {
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .card p {
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            margin-bottom: 18px;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 14px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .price {
+            color: var(--text-primary);
+            font-weight: 900;
+            font-size: 1.2rem;
+        }
+
+        .btn-small {
+            background-color: var(--bg-elevated);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-small.selected {
+            background-color: var(--accent);
+            color: #ffffff;
+            border-color: var(--accent);
+        }
+
+        /* Навигация шагов */
+        .step-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .back-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 8px 14px;
+            border-radius: 4px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            font-size: 0.78rem;
+        }
+
+        .back-btn:hover {
+            color: var(--text-primary);
+            border-color: var(--text-primary);
+        }
+
+        .step-indicator {
+            font-size: 0.85rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: var(--accent);
+            letter-spacing: 1px;
+        }
+
+        /* Форма бронирования */
+        .booking-box {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 26px;
+            max-width: 520px;
+            margin: 0 auto;
+        }
+
+        .summary-ticket {
+            background: var(--bg-main);
+            border-left: 3px solid var(--accent);
+            padding: 16px;
+            margin-bottom: 24px;
+            font-size: 0.9rem;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+        }
+
+        .summary-row:last-child {
+            margin-bottom: 0;
+            padding-top: 8px;
+            border-top: 1px dashed var(--border-color);
+            font-weight: 800;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 13px;
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--accent);
+        }
+
+        /* Уведомление */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--text-primary);
+            color: var(--bg-main);
+            padding: 10px 22px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: none;
+            z-index: 2000;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="barber-stripe"></div>
+
+    <header>
+        <div class="logo" onclick="switchPage('homePage')">BARBER<span>STREET</span></div>
+        <button class="booking-btn-top" onclick="goToBooking()">Запись онлайн</button>
+    </header>
+
+    <!-- ЭКРАН 1: ГЛАВНАЯ -->
+    <div id="homePage" class="page-view active">
+        <section class="hero">
+            <div class="hero-tag">Душанбе • Мужская территория</div>
+            <h1>Твой стиль.<br>Твои правила.</h1>
+            <p>Никакой суеты и лишних слов. Четкие фейды, оформление бороды опасной бритвой и мужская атмосфера в центре города.</p>
+            <button class="btn-main" onclick="switchPage('servicesPage')">Записаться на стрижку →</button>
+        </section>
+
+        <div class="container">
+            <h2 class="section-title">Почему выбирают нас</h2>
+            <div class="grid">
+                <div class="card">
+                    <div>
+                        <h3>01 / Точность</h3>
+                        <p>Подбираем форму стрижки и бороды строго под геометрию твоего лица и тип волос.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div>
+                        <h3>02 / Инструмент</h3>
+                        <p>Стерильный инструмент, профессиональная мужская косметика и горячие полотенца.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div>
+                        <h3>03 / Атмосфера</h3>
+                        <p>Крепкий эспрессо, правильная музыка и закрытый мужской клуб без посторонних.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ЭКРАН 2: УСЛУГИ -->
+    <div id="servicesPage" class="page-view">
+        <div class="container">
+            <div class="step-header">
+                <button class="back-btn" onclick="switchPage('homePage')">← Назад</button>
+                <span class="step-indicator">Шаг 01 / Услуга</span>
+            </div>
+
+            <div class="grid" id="servicesGrid">
+                <div class="card" onclick="selectService('Мужская стрижка', 120, this)">
+                    <div>
+                        <h3>Мужская стрижка</h3>
+                        <p>Стрижка машинкой и ножницами, мытье головы, укладка стайлингом.</p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="price">120 с.</div>
+                        <button class="btn-small">Выбрать</button>
+                    </div>
+                </div>
+
+                <div class="card" onclick="selectService('Стрижка + Борода', 180, this)">
+                    <div>
+                        <h3>Стрижка + Борода</h3>
+                        <p>Полный комплекс: модельная стрижка, коррекция бороды, контур бритвой.</p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="price">180 с.</div>
+                        <button class="btn-small">Выбрать</button>
+                    </div>
+                </div>
+
+                <div class="card" onclick="selectService('Моделирование бороды', 80, this)">
+                    <div>
+                        <h3>Моделирование бороды</h3>
+                        <p>Придание четкой формы, распаривание компрессом, бритье опасным лезвием.</p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="price">80 с.</div>
+                        <button class="btn-small">Выбрать</button>
+                    </div>
+                </div>
+
+                <div class="card" onclick="selectService('Отец + Сын', 190, this)">
+                    <div>
+                        <h3>Отец + Сын</h3>
+                        <p>Две полноценные мужские стрижки в одно время по специальной цене.</p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="price">190 с.</div>
+                        <button class="btn-small">Выбрать</button>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-main" style="width: 100%; justify-content: center; display: none;" id="toMasterBtn" onclick="switchPage('mastersPage')">Перейти к выбору мастера →</button>
+        </div>
+    </div>
+
+    <!-- ЭКРАН 3: МАСТЕРА -->
+    <div id="mastersPage" class="page-view">
+        <div class="container">
+            <div class="step-header">
+                <button class="back-btn" onclick="switchPage('servicesPage')">← Услуги</button>
+                <span class="step-indicator">Шаг 02 / Барбер</span>
+            </div>
+
+            <div class="grid" id="mastersGrid">
+                <div class="card" onclick="selectMaster('Тимур (Топ-барбер)', this)">
+                    <div>
+                        <h3>Тимур</h3>
+                        <p style="color: var(--accent); font-weight: 700; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 10px;">Топ-барбер • Опыт 7 лет</p>
+                        <p>Специализируется на сложных фейдах, текстурных стрижках и работе с длинными волосами.</p>
+                    </div>
+                    <div class="card-footer">
+                        <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">★ 5.0 (140+ отзывов)</span>
+                        <button class="btn-small">Выбрать</button>
+                    </div>
+                </div>
+
+                <div class="card" onclick="selectMaster('Фарход (Барбер)', this)">
+                    <div>
+                        <h3>Фарход</h3>
+                        <p style="color: var(--accent); font-weight: 700; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 10px;">Барбер • Опыт 4 года</p>
+                        <p>Мастер классических мужских форм, королевского бритья и геометрии бороды.</p>
+                    </div>
+                    <div class="card-footer">
+                        <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">★ 4.9 (95+ отзывов)</span>
+                        <button class="btn-small">Выбрать</button>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-main" style="width: 100%; justify-content: center; display: none;" id="toCheckoutBtn" onclick="switchPage('checkoutPage')">Выбрать время визита →</button>
+        </div>
+    </div>
+
+    <!-- ЭКРАН 4: ЗАПИСЬ -->
+    <div id="checkoutPage" class="page-view">
+        <div class="container">
+            <div class="step-header">
+                <button class="back-btn" onclick="switchPage('mastersPage')">← Мастера</button>
+                <span class="step-indicator">Шаг 03 / Бронь</span>
+            </div>
+
+            <div class="booking-box">
+                <div class="summary-ticket">
+                    <div class="summary-row">
+                        <span>Услуга:</span>
+                        <span id="sumService" style="color: var(--text-primary); font-weight: 700;">—</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Мастер:</span>
+                        <span id="sumMaster" style="color: var(--text-primary); font-weight: 700;">Любой свободный</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>К оплате:</span>
+                        <span id="sumPrice" style="color: var(--accent);">0 с.</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Ваше имя</label>
+                    <input type="text" id="clientName" placeholder="Например: Алишер">
+                </div>
+
+                <div class="form-group">
+                    <label>Номер телефона</label>
+                    <input type="tel" id="clientPhone" placeholder="+992 (__) ___ __ __">
+                </div>
+
+                <div class="form-group">
+                    <label>Дата и время</label>
+                    <select id="visitTime">
+                        <option value="Сегодня в 15:00">Сегодня — 15:00</option>
+                        <option value="Сегодня в 17:30">Сегодня — 17:30</option>
+                        <option value="Сегодня в 20:00">Сегодня — 20:00</option>
+                        <option value="Завтра в 11:00">Завтра — 11:00</option>
+                        <option value="Завтра в 14:00">Завтра — 14:00</option>
+                    </select>
+                </div>
+
+                <button class="btn-main" style="width: 100%; justify-content: center; margin-top: 10px;" onclick="submitBooking()">Подтвердить в WhatsApp</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast">Выбрано</div>
+
+    <script>
+        let selectedData = {
+            service: '',
+            price: 0,
+            master: 'Любой свободный'
+        };
+
+        function switchPage(pageId) {
+            if (pageId === 'checkoutPage') {
+                updateSummary();
+            }
+            document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        function selectService(name, price, cardElement) {
+            document.querySelectorAll('#servicesGrid .card').forEach(c => {
+                c.classList.remove('active-card');
+                let btn = c.querySelector('.btn-small');
+                btn.classList.remove('selected');
+                btn.innerText = 'Выбрать';
+            });
+
+            cardElement.classList.add('active-card');
+            let btn = cardElement.querySelector('.btn-small');
+            btn.classList.add('selected');
+            btn.innerText = 'Выбрано ✓';
+
+            selectedData.service = name;
+            selectedData.price = price;
+
+            document.getElementById('toMasterBtn').style.display = 'inline-flex';
+            showToast('Услуга: ' + name);
+        }
+
+        function selectMaster(name, cardElement) {
+            document.querySelectorAll('#mastersGrid .card').forEach(c => {
+                c.classList.remove('active-card');
+                let btn = c.querySelector('.btn-small');
+                btn.classList.remove('selected');
+                btn.innerText = 'Выбрать';
+            });
+
+            cardElement.classList.add('active-card');
+            let btn = cardElement.querySelector('.btn-small');
+            btn.classList.add('selected');
+            btn.innerText = 'Выбран ✓';
+
+            selectedData.master = name;
+
+            document.getElementById('toCheckoutBtn').style.display = 'inline-flex';
+            showToast('Барбер: ' + name);
+        }
+
+        function goToBooking() {
+            if (!selectedData.service) {
+                switchPage('servicesPage');
+            } else {
+                switchPage('checkoutPage');
+            }
+        }
+
+        function updateSummary() {
+            document.getElementById('sumService').innerText = selectedData.service || 'Не выбрана';
+            document.getElementById('sumMaster').innerText = selectedData.master;
+            document.getElementById('sumPrice').innerText = selectedData.price + ' с.';
+        }
+
+        function showToast(text) {
+            let toast = document.getElementById('toast');
+            toast.innerText = text;
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 1600);
+        }
+
+        function submitBooking() {
+            let name = document.getElementById('clientName').value.trim();
+            let phone = document.getElementById('clientPhone').value.trim();
+            let time = document.getElementById('visitTime').value;
+
+            if (name.length < 2 || phone.length < 5) {
+                alert('Пожалуйста, введите ваше имя и номер телефона!');
+                return;
+            }
+
+            let text = `Здравствуйте! Запись в BARBER STREET:%0A👤 Имя: ${name}%0A📞 Телефон: ${phone}%0A✂️ Услуга: ${selectedData.service}%0A💈 Мастер: ${selectedData.master}%0A🕒 Время: ${time}%0A💵 Сумма: ${selectedData.price} с.`;
+            let whatsappUrl = `https://wa.me/992970980300?text=${text}`;
+            
+            window.open(whatsappUrl, '_blank');
+        }
+    </script>
+</body>
+</html>
